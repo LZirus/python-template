@@ -1,0 +1,36 @@
+# Compose file to interactively run a container with monailabel installed
+# docker compose run monailabel
+
+version: "3"
+services:
+  development:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+# specify python-version and image variant
+      args:
+        - PYTHON_VERSION=3.8
+        - VARIANT=buster
+# Uncomment for host network mode
+    # network_mode: "host"
+# Uncomment for IPC host mode
+    # ipc: "host"
+# Uncomment to set ulimits
+    # ulimits:
+    #   memlock: -1
+    #   stack: 67108864
+# Uncomment the following for interactive mode
+    # stdin_open: true
+    # tty: true
+    # command: /bin/sh -c "while sleep 1000; do :; done"
+# Uncomment for GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+# add dev-volumes here
+    volumes:
+      - ./sourcecode:/workspace/sourcecode

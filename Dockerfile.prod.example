@@ -1,0 +1,33 @@
+FROM python:3.8-buster as builder
+
+# python
+ENV PYTHONUNBUFFERED=1
+# pip:
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PIP_DEFAULT_TIMEOUT=100
+# poetry:
+ENV POETRY_NO_INTERACTION=1
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+RUN pip install "poetry>=1.1.13,<2.0.0"
+
+WORKDIR /workdir
+
+COPY poetry.lock pyproject.toml ./
+
+RUN poetry install --only main --no-ansi
+
+# ==============================================================================
+
+FROM python:3.8-buster as production
+
+WORKDIR /workdir
+
+COPY --from=builder /workdir/.venv /workdir/.venv
+
+ENV PATH=/workdir/.venv/bin:$PATH
+
+COPY . .
+
+EXPOSE 8000
